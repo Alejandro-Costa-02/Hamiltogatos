@@ -1,0 +1,59 @@
+fact 1 = 1
+fact n = n * (fact (n-1))
+
+
+saltos :: [Integer] -> Integer
+saltos lista
+  | (length(lista)>1) && (head(lista)==0) && (head(tail(lista))==1)  = 1 + saltos(tail(lista))
+  | length(lista)>1 = saltos(tail(lista))
+  | otherwise = 0
+
+
+
+anade :: [Integer] -> [[Integer]]
+anade lista
+  | (saltos(lista)< 1) = [lista++[0],lista++[1]]
+  | (saltos(lista)==1) && (last(lista)==1) = [lista++[0],lista++[1]]
+  | (saltos(lista)==1) && (last(lista)==0) = [lista++[0]]
+  | otherwise = []
+
+anadelista :: [[Integer]] -> [[Integer]]
+anadelista [] = []
+anadelista listas = anade(head(listas)) ++ anadelista(tail(listas))
+
+anade2 :: [Integer] -> [[Integer]]
+anade2 lista
+  | (saltos(lista)< 1) && (last(lista)==0) = [lista++[1]]
+  | (saltos(lista)==1) && (last(lista)==1) = [lista++[0],lista++[1]]
+  | (saltos(lista)==1) && (last(lista)==0) = [lista++[0]]
+  | otherwise = []
+
+anadelista2 :: [[Integer]] -> [[Integer]]
+anadelista2 [] = []
+anadelista2 listas = anade2(head(listas)) ++ anadelista2(tail(listas))
+
+funlista 1 = [[1]]
+funlista n = anadelista (funlista (n-1))
+
+funfinal n = anadelista2 (funlista (n-1))
+
+lfunfinal n = length (funfinal n)
+
+comb3 n = ((fact(n)) `div` ((fact(3))*(fact(n-3))))
+
+
+
+{- Aqui vemos la forma bruta de generarlo, podemos comprobar que son equivalentes, simplemente que el orden del algoritmo y el tiempo que tarda el segundo es mucho mayor que el primero, el cual es la razon de la complejidad del mismo-}
+
+anadetodas :: [Integer] -> [[Integer]]
+anadetodas lista = [lista ++[1], lista ++ [0]] 
+
+anadetodaslista :: [[Integer]] -> [[Integer]]
+anadetodaslista [] = []
+anadetodaslista listas = anadetodas(head(listas)) ++ anadetodaslista(tail(listas))
+
+
+todaslaslistas 1 = [[1]]
+todaslaslistas n = anadetodaslista(todaslaslistas(n-1))
+
+todasLasListasBuenas n = [ x | x <- (todaslaslistas n), saltos(x)==1 ]
